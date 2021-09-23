@@ -6,6 +6,8 @@ inputs:
     required: true
   docker-image-name:
     required: true
+  docker-image-tag:
+    required: true
   eks-app-name:
     required: true
   eks-namespace:
@@ -13,9 +15,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Get branch name
-      id: branch-name
-      uses: tj-actions/branch-names@v5
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -25,10 +24,10 @@ runs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
-    - name: Deploy ${{ steps.branch-name.outputs.current_branch }} to Kubernetes cluster
+    - name: Deploy ${{ inputs.docker-image-tag }} to Kubernetes cluster
       uses: ianbelcher/eks-kubectl-action@master
       env:
-        RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.docker-image-name }}:${{ steps.branch-name.outputs.current_branch }}
+        RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.docker-image-name }}:${{ inputs.docker-image-tag }}
       with:
         aws_access_key_id: ${{ inputs.aws-access-key-id }}
         aws_secret_access_key: ${{ inputs.aws-secret-access-key }}
