@@ -7,6 +7,7 @@
           aws-access-key-id: ${{ secrets.EKS_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.EKS_AWS_SECRET_ACCESS_KEY }}
           docker-image-name: ${{ env.ECR_APP_NAME }}
+          docker-image-tag: v1.2.0
           eks-app-name: ${{ env.EKS_APP_NAME }}
           eks-namespace: ${{ env.EKS_NAMESPACE}}
 ```
