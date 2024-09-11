@@ -36,7 +36,7 @@ runs:
         args: set image deployment/${{ inputs.eks-app-name }} ${{ inputs.eks-app-name }}=${{ env.RELEASE_IMAGE }} -n ${{ inputs.eks-namespace }}
     - name: Verify Kubernetes deployment
       uses: ianbelcher/eks-kubectl-action@master
-      if: !contains(inputs.eks-namespace, 'dev')
+      if: ${{ ! contains(inputs.eks-namespace, "dev") }}
       with:
         aws_access_key_id: ${{ inputs.aws-access-key-id }}
         aws_secret_access_key: ${{ inputs.aws-secret-access-key }}
