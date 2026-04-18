@@ -14,6 +14,9 @@ inputs:
     required: true
   cluster-name:
     required: true
+  aws-region:
+    required: false
+    default: us-west-2
 runs:
   using: "composite"
   steps:
@@ -22,7 +25,7 @@ runs:
       with:
         aws-access-key-id: ${{ inputs.aws-access-key-id }}
         aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
-        aws-region: us-west-2
+        aws-region: ${{ inputs.aws-region }}
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
@@ -33,7 +36,7 @@ runs:
       with:
         aws_access_key_id: ${{ inputs.aws-access-key-id }}
         aws_secret_access_key: ${{ inputs.aws-secret-access-key }}
-        aws_region: us-west-2
+        aws_region: ${{ inputs.aws-region }}
         cluster_name: ${{ inputs.cluster-name }}
         args: set image deployment/${{ inputs.eks-app-name }} ${{ inputs.eks-app-name }}=${{ env.RELEASE_IMAGE }} -n ${{ inputs.eks-namespace }}
     - name: Verify Kubernetes deployment
@@ -42,6 +45,6 @@ runs:
       with:
         aws_access_key_id: ${{ inputs.aws-access-key-id }}
         aws_secret_access_key: ${{ inputs.aws-secret-access-key }}
-        aws_region: us-west-2
+        aws_region: ${{ inputs.aws-region }}
         cluster_name: ${{ inputs.cluster-name }}
         args: rollout status deployment/${{ inputs.eks-app-name}} -n ${{ inputs.eks-namespace}}
