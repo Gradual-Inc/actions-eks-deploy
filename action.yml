@@ -41,8 +41,8 @@ runs:
           -e INPUT_EKS_ROLE_ARN= \
           -e INPUT_STDIN= \
           -e INPUT_KUBERNETES_VERSION= \
-          -e "INPUT_ARGS=set image deployment/${{ inputs.eks-app-name }} ${{ inputs.eks-app-name }}=${RELEASE_IMAGE} -n ${{ inputs.eks-namespace }}" \
-          034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest
+          034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest \
+          set image "deployment/${{ inputs.eks-app-name }}" "${{ inputs.eks-app-name }}=${RELEASE_IMAGE}" -n "${{ inputs.eks-namespace }}"
     - name: Verify Kubernetes deployment
       if: ${{ ! contains(inputs.eks-namespace, 'dev') }}
       shell: bash
@@ -55,5 +55,5 @@ runs:
           -e INPUT_EKS_ROLE_ARN= \
           -e INPUT_STDIN= \
           -e INPUT_KUBERNETES_VERSION= \
-          -e "INPUT_ARGS=rollout status deployment/${{ inputs.eks-app-name }} -n ${{ inputs.eks-namespace }}" \
-          034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest
+          034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest \
+          rollout status "deployment/${{ inputs.eks-app-name }}" -n "${{ inputs.eks-namespace }}"
