@@ -4,6 +4,10 @@ inputs:
     required: true
   aws-secret-access-key:
     required: true
+  aws-region:
+    required: true
+  cluster-name:
+    required: true
   docker-image-name:
     required: true
   docker-image-tag:
@@ -12,11 +16,6 @@ inputs:
     required: true
   eks-namespace:
     required: true
-  cluster-name:
-    required: true
-  aws-region:
-    required: false
-    default: us-west-2
 runs:
   using: "composite"
   steps:
@@ -30,7 +29,7 @@ runs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
     - name: Deploy ${{ inputs.docker-image-tag }} to Kubernetes cluster
-      uses: ianbelcher/eks-kubectl-action@master
+      uses: docker://034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest
       env:
         RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.docker-image-name }}:${{ inputs.docker-image-tag }}
       with:
@@ -40,7 +39,7 @@ runs:
         cluster_name: ${{ inputs.cluster-name }}
         args: set image deployment/${{ inputs.eks-app-name }} ${{ inputs.eks-app-name }}=${{ env.RELEASE_IMAGE }} -n ${{ inputs.eks-namespace }}
     - name: Verify Kubernetes deployment
-      uses: ianbelcher/eks-kubectl-action@master
+      uses: docker://034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest
       if: ${{ ! contains(inputs.eks-namespace, 'dev') }}
       with:
         aws_access_key_id: ${{ inputs.aws-access-key-id }}
