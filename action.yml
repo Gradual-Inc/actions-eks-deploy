@@ -29,21 +29,25 @@ runs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
     - name: Deploy ${{ inputs.docker-image-tag }} to Kubernetes cluster
-      uses: docker://034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest
+      shell: bash
       env:
         RELEASE_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.docker-image-name }}:${{ inputs.docker-image-tag }}
-      with:
-        aws_access_key_id: ${{ inputs.aws-access-key-id }}
-        aws_secret_access_key: ${{ inputs.aws-secret-access-key }}
-        aws_region: ${{ inputs.aws-region }}
-        cluster_name: ${{ inputs.cluster-name }}
-        args: set image deployment/${{ inputs.eks-app-name }} ${{ inputs.eks-app-name }}=${{ env.RELEASE_IMAGE }} -n ${{ inputs.eks-namespace }}
+      run: |
+        docker run --rm \
+          -e INPUT_AWS_ACCESS_KEY_ID='${{ inputs.aws-access-key-id }}' \
+          -e INPUT_AWS_SECRET_ACCESS_KEY='${{ inputs.aws-secret-access-key }}' \
+          -e INPUT_AWS_REGION='${{ inputs.aws-region }}' \
+          -e INPUT_CLUSTER_NAME='${{ inputs.cluster-name }}' \
+          -e "INPUT_ARGS=set image deployment/${{ inputs.eks-app-name }} ${{ inputs.eks-app-name }}=${RELEASE_IMAGE} -n ${{ inputs.eks-namespace }}" \
+          034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest
     - name: Verify Kubernetes deployment
-      uses: docker://034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest
       if: ${{ ! contains(inputs.eks-namespace, 'dev') }}
-      with:
-        aws_access_key_id: ${{ inputs.aws-access-key-id }}
-        aws_secret_access_key: ${{ inputs.aws-secret-access-key }}
-        aws_region: ${{ inputs.aws-region }}
-        cluster_name: ${{ inputs.cluster-name }}
-        args: rollout status deployment/${{ inputs.eks-app-name}} -n ${{ inputs.eks-namespace}}
+      shell: bash
+      run: |
+        docker run --rm \
+          -e INPUT_AWS_ACCESS_KEY_ID='${{ inputs.aws-access-key-id }}' \
+          -e INPUT_AWS_SECRET_ACCESS_KEY='${{ inputs.aws-secret-access-key }}' \
+          -e INPUT_AWS_REGION='${{ inputs.aws-region }}' \
+          -e INPUT_CLUSTER_NAME='${{ inputs.cluster-name }}' \
+          -e "INPUT_ARGS=rollout status deployment/${{ inputs.eks-app-name }} -n ${{ inputs.eks-namespace }}" \
+          034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest
