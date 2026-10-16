@@ -38,6 +38,9 @@ runs:
           -e INPUT_AWS_SECRET_ACCESS_KEY='${{ inputs.aws-secret-access-key }}' \
           -e INPUT_AWS_REGION='${{ inputs.aws-region }}' \
           -e INPUT_CLUSTER_NAME='${{ inputs.cluster-name }}' \
+          -e INPUT_EKS_ROLE_ARN= \
+          -e INPUT_STDIN= \
+          -e INPUT_KUBERNETES_VERSION= \
           -e "INPUT_ARGS=set image deployment/${{ inputs.eks-app-name }} ${{ inputs.eks-app-name }}=${RELEASE_IMAGE} -n ${{ inputs.eks-namespace }}" \
           034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest
     - name: Verify Kubernetes deployment
@@ -49,5 +52,8 @@ runs:
           -e INPUT_AWS_SECRET_ACCESS_KEY='${{ inputs.aws-secret-access-key }}' \
           -e INPUT_AWS_REGION='${{ inputs.aws-region }}' \
           -e INPUT_CLUSTER_NAME='${{ inputs.cluster-name }}' \
+          -e INPUT_EKS_ROLE_ARN= \
+          -e INPUT_STDIN= \
+          -e INPUT_KUBERNETES_VERSION= \
           -e "INPUT_ARGS=rollout status deployment/${{ inputs.eks-app-name }} -n ${{ inputs.eks-namespace }}" \
           034997445696.dkr.ecr.cn-north-1.amazonaws.com.cn/ci/eks-kubectl-action:latest
